@@ -1,0 +1,79 @@
+---
+import type { Article } from '../lib/articles';
+import { categoryOf, fmtDate } from '../lib/articles';
+
+export interface Props {
+  article: Article;
+  variant?: 'feature' | 'standard' | 'compact' | 'rail';
+  delay?: number;
+  eager?: boolean;
+}
+const { article, variant = 'standard', delay = 0, eager = false } = Astro.props;
+const cat = categoryOf(article);
+const href = `/${article.slug}/`;
+const img = article.image;
+const card = img ? img.replace('.webp', '-card.webp') : null;
+---
+<article class={`card v-${variant}`} data-reveal data-reveal-d={delay} style={`--cc:${cat.color}`}>
+  <a href={href} class="media" aria-hidden="true" tabindex="-1">
+    {img ? (
+      <img
+        src={variant === 'feature' ? img : card}
+        srcset={variant === 'feature' ? undefined : `${card} 780w, ${img} 1536w`}
+        sizes={variant === 'feature' ? '(max-width: 900px) 100vw, 60vw' : '(max-width: 700px) 100vw, 380px'}
+        alt={article.image_alt}
+        width={variant === 'feature' ? 1536 : 780}
+        height={variant === 'feature' ? 1024 : 520}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+      />
+    ) : (
+      <span class="ph" aria-hidden="true">{article.title.slice(0, 1)}</span>
+    )}
+    <span class="tag">{cat.label}</span>
+  </a>
+  <div class="body">
+    <a href={`/categorie/${cat.slug}/`} class="kicker cat-kicker">{cat.label}</a>
+    <h3><a href={href}>{article.title}</a></h3>
+    {variant !== 'compact' && variant !== 'rail' && <p class="dek">{article.excerpt}</p>}
+    <div class="meta">
+      <span>{fmtDate(article.date)}</span>
+      <span class="mid">·</span>
+      <span>{article.reading_time_min} min</span>
+    </div>
+  </div>
+</article>
+
+<style>
+  .card { position: relative; display: flex; flex-direction: column; }
+  .media { position: relative; display: block; overflow: hidden; border-radius: 18px; background: var(--paper-2); aspect-ratio: 3/2; box-shadow: var(--shadow); }
+  .media img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
+  .card:hover .media img { transform: scale(1.06); }
+  .ph { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-display); font-size: 4rem; color: color-mix(in srgb, var(--cc) 60%, #fff); background: linear-gradient(135deg, color-mix(in srgb, var(--cc) 16%, #fff), var(--paper-2)); }
+  .tag { position: absolute; left: .8rem; bottom: .8rem; font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: color-mix(in srgb, var(--cc) 92%, #000 4%); padding: .34em .7em; border-radius: 100px; box-shadow: 0 6px 16px -6px rgba(0,0,0,.4); opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
+  .card:hover .tag { opacity: 1; transform: none; }
+
+  .body { padding-top: .9rem; display: flex; flex-direction: column; gap: .45rem; }
+  .cat-kicker { color: var(--cc); font-size: .68rem; }
+  .card h3 { font-size: 1.24rem; line-height: 1.16; }
+  .card h3 a { background-image: linear-gradient(var(--cc), var(--cc)); background-size: 0 2px; background-position: 0 100%; background-repeat: no-repeat; transition: background-size .35s var(--ease); }
+  .card:hover h3 a { background-size: 100% 2px; }
+  .dek { color: var(--text-soft); font-size: .98rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .meta { font-size: .82rem; color: var(--slate); display: flex; gap: .5em; align-items: center; margin-top: .1rem; }
+  .meta .mid { color: var(--cc); }
+
+  /* Feature (hero lead) */
+  .v-feature .media { aspect-ratio: 16/10; border-radius: 26px; }
+  .v-feature h3 { font-size: clamp(1.9rem, 4vw, 3rem); letter-spacing: -.02em; }
+  .v-feature .dek { font-size: 1.1rem; -webkit-line-clamp: 3; max-width: 52ch; }
+
+  /* Compact (list rows) */
+  .v-compact { flex-direction: row; gap: 1rem; align-items: flex-start; }
+  .v-compact .media { flex: 0 0 116px; aspect-ratio: 1/1; border-radius: 14px; }
+  .v-compact .body { padding-top: 0; gap: .3rem; }
+  .v-compact h3 { font-size: 1.02rem; }
+
+  /* Rail (horizontal scroll) */
+  .v-rail { flex: 0 0 280px; }
+  .v-rail h3 { font-size: 1.08rem; }
+</style>

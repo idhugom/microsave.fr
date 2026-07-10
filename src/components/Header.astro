@@ -1,0 +1,69 @@
+---
+import { CATEGORIES } from '../lib/categories';
+const primary = CATEGORIES.slice(0, 7);
+---
+<header class="site-header">
+  <div class="accent"></div>
+  <div class="bar wrap">
+    <a href="/" class="brand" aria-label="Microsave — accueil" transition:name="brand">
+      <img src="/logo-microsave.svg" alt="Microsave" width="150" height="118" />
+    </a>
+
+    <nav class="site-nav" aria-label="Rubriques">
+      <ul>
+        {primary.map((c) => (
+          <li><a href={`/categorie/${c.slug}/`} style={`--cc:${c.color}`}>{c.label.split(' ')[0]}</a></li>
+        ))}
+        <li class="all"><a href="/rubriques/">Toutes les rubriques →</a></li>
+      </ul>
+    </nav>
+
+    <div class="tools">
+      <a class="search-link" href="/rubriques/" aria-label="Explorer">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      </a>
+      <button class="burger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header { position: sticky; top: 0; z-index: 100; backdrop-filter: saturate(1.4) blur(10px); background: color-mix(in srgb, var(--paper) 82%, transparent); transition: background .3s, box-shadow .3s; }
+  .site-header.scrolled { background: color-mix(in srgb, var(--paper) 94%, transparent); box-shadow: 0 6px 30px -18px rgba(11,56,79,.5); }
+  .accent { height: 4px; background: linear-gradient(90deg, var(--pink), var(--beige) 40%, var(--ink)); }
+  .bar { display: flex; align-items: center; gap: 1.4rem; padding-block: .55rem; }
+  .brand img { height: 46px; width: auto; transition: height .3s var(--ease); }
+  .site-header.scrolled .brand img { height: 38px; }
+
+  .site-nav { margin-left: auto; }
+  .site-nav ul { list-style: none; display: flex; align-items: center; gap: .3rem; padding: 0; }
+  .site-nav a { position: relative; padding: .5em .8em; font-weight: 560; font-size: .96rem; color: var(--ink); border-radius: 100px; transition: color .25s, background .25s; }
+  .site-nav a::after { content: ""; position: absolute; left: 50%; bottom: .3em; width: 0; height: 2px; background: var(--cc, var(--pink)); border-radius: 2px; transform: translateX(-50%); transition: width .3s var(--ease); }
+  .site-nav a:hover { color: var(--cc, var(--pink-deep)); }
+  .site-nav a:hover::after { width: 55%; }
+  .site-nav .all a { background: var(--ink); color: #fff; font-size: .86rem; }
+  .site-nav .all a:hover { background: var(--pink-deep); }
+  .site-nav .all a::after { display: none; }
+
+  .tools { display: flex; align-items: center; gap: .4rem; }
+  .search-link { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: var(--ink); border: 1px solid var(--line); background: #fff; transition: transform .3s, color .3s; }
+  .search-link:hover { transform: rotate(-8deg) scale(1.06); color: var(--pink-deep); }
+  .burger { display: none; }
+
+  @media (max-width: 900px) {
+    .site-nav { position: fixed; inset: 0 0 0 auto; width: min(84vw, 340px); background: var(--paper); box-shadow: var(--shadow-lg); transform: translateX(105%); transition: transform .4s var(--ease); padding: 5rem 1.4rem 2rem; margin: 0; overflow-y: auto; }
+    .site-nav.open { transform: none; }
+    .site-nav ul { flex-direction: column; align-items: stretch; gap: .2rem; }
+    .site-nav a { font-size: 1.15rem; padding: .7em .6em; border-radius: 12px; }
+    .site-nav a::after { display: none; }
+    .site-nav a:hover { background: var(--paper-2); }
+    .site-nav .all a { margin-top: .6rem; text-align: center; }
+    .burger { display: grid; gap: 5px; width: 42px; height: 42px; place-content: center; background: var(--ink); border: none; border-radius: 50%; cursor: pointer; z-index: 101; }
+    .burger span { display: block; width: 18px; height: 2px; background: #fff; border-radius: 2px; transition: transform .3s, opacity .3s; }
+    .burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  }
+</style>

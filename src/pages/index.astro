@@ -1,0 +1,218 @@
+---
+import Base from '../layouts/Base.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { articles, inCategory, fmtDate, categoryOf } from '../lib/articles';
+import { CATEGORIES } from '../lib/categories';
+
+const withImg = articles.filter((a) => a.image);
+const pool = withImg.length >= 8 ? withImg : articles;
+const lead = pool[0];
+const side = pool.slice(1, 5);
+const grid = pool.slice(5, 17);
+
+const catData = CATEGORIES
+  .map((c) => ({ c, items: inCategory(c.label) }))
+  .filter((x) => x.items.length > 0)
+  .sort((a, b) => b.items.length - a.items.length);
+
+const rails = catData.filter((x) => x.items.length >= 5).slice(0, 4);
+const totalReads = articles.length;
+
+const ticker = catData.slice(0, 12).map((x) => x.c.label);
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Microsave',
+  url: 'https://www.microsave.fr',
+  description: 'Le magazine des choix malins : décryptages, comparatifs et conseils pratiques.',
+};
+---
+<Base title="Microsave · Le magazine des choix malins" jsonld={jsonld} bodyClass="home">
+  <!-- ============ COVER ============ -->
+  <section class="cover">
+    <div class="mesh" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="wrap cover-inner">
+      <div class="masthead" data-reveal>
+        <span class="kicker">Le magazine des choix malins</span>
+        <h1>On décrypte le quotidien,<br /><em>vous décidez mieux.</em></h1>
+        <p class="lede">Comparatifs, guides pratiques et décryptages sur l’assurance, la maison, le voyage, le bricolage et bien plus — {totalReads} sujets passés au crible.</p>
+      </div>
+
+      <div class="cover-grid">
+        {lead && (
+          <div class="lead" data-reveal data-reveal-d="1">
+            <span class="badge">À la une</span>
+            <ArticleCard article={lead} variant="feature" eager={true} />
+          </div>
+        )}
+        <aside class="side" data-reveal data-reveal-d="2">
+          <h2 class="side-title">Aussi cette semaine</h2>
+          <ul>
+            {side.map((a, i) => {
+              const cat = categoryOf(a);
+              return (
+                <li style={`--cc:${cat.color}`}>
+                  <a href={`/${a.slug}/`}>
+                    <span class="num">{String(i + 1).padStart(2, '0')}</span>
+                    <span class="txt">
+                      <span class="c">{cat.label}</span>
+                      <span class="t">{a.title}</span>
+                      <span class="m">{a.reading_time_min} min de lecture</span>
+                    </span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TICKER ============ -->
+  <div class="ticker" aria-hidden="true">
+    <div class="track">
+      {[...ticker, ...ticker].map((t) => (<span>{t}<i>✦</i></span>))}
+    </div>
+  </div>
+
+  <!-- ============ RUBRIQUES MOSAIC ============ -->
+  <section class="wrap block">
+    <div class="section-head">
+      <div>
+        <span class="kicker">Naviguez par envie</span>
+        <h2>Les rubriques</h2>
+      </div>
+      <a href="/rubriques/" class="more">Tout voir <span>→</span></a>
+    </div>
+    <div class="mosaic">
+      {catData.slice(0, 8).map(({ c, items }, i) => (
+        <a class="tile" href={`/categorie/${c.slug}/`} style={`--cc:${c.color}`} data-reveal data-reveal-d={(i % 4) + 1}>
+          <span class="count">{items.length}</span>
+          <span class="tname">{c.label}</span>
+          <span class="tblurb">{c.blurb}</span>
+          <span class="go">Explorer →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ CATEGORY RAILS ============ -->
+  {rails.map(({ c, items }) => (
+    <section class="wrap block rail-block">
+      <div class="section-head">
+        <div>
+          <span class="kicker" style={`color:${c.color}`}>{items.length} articles</span>
+          <h2>{c.label}</h2>
+        </div>
+        <a href={`/categorie/${c.slug}/`} class="more">Voir la rubrique <span>→</span></a>
+      </div>
+      <div class="rail">
+        {items.slice(0, 8).map((a, i) => (
+          <ArticleCard article={a} variant="rail" delay={(i % 4) + 1} />
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <!-- ============ LATEST GRID ============ -->
+  <section class="wrap block">
+    <div class="section-head">
+      <div>
+        <span class="kicker">Fraîchement publié</span>
+        <h2>Les derniers décryptages</h2>
+      </div>
+    </div>
+    <div class="feed">
+      {grid.map((a, i) => (<ArticleCard article={a} delay={(i % 3) + 1} />))}
+    </div>
+  </section>
+
+  <!-- ============ EDITO BAND ============ -->
+  <section class="edito-band">
+    <div class="wrap edito" data-reveal>
+      <h2>Un média qui va droit au but.</h2>
+      <p>Chez Microsave, on écrit pour vous rendre service : chaque article répond vraiment à la question que vous vous posez, tableaux et comparatifs à l’appui. Zéro blabla, que du concret.</p>
+      <a href="/rubriques/" class="btn btn-pink">Explorer toutes les rubriques →</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Cover ---------- */
+  .cover { position: relative; padding-top: clamp(2rem, 5vw, 4rem); padding-bottom: clamp(1rem, 3vw, 2rem); overflow: clip; }
+  .mesh { position: absolute; inset: -20% -10% auto -10%; height: 120%; z-index: -1; filter: blur(60px); opacity: .8; }
+  .mesh span { position: absolute; border-radius: 50%; display: block; animation: float 18s ease-in-out infinite; }
+  .mesh span:nth-child(1) { width: 34vw; height: 34vw; left: -4%; top: -8%; background: rgba(250,97,154,.4); }
+  .mesh span:nth-child(2) { width: 28vw; height: 28vw; right: 4%; top: 2%; background: rgba(237,205,171,.6); animation-delay: -6s; }
+  .mesh span:nth-child(3) { width: 22vw; height: 22vw; right: 22%; top: 30%; background: rgba(11,56,79,.18); animation-delay: -12s; }
+  @keyframes float { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(3%, 4%) scale(1.08); } 66% { transform: translate(-3%, -2%) scale(.96); } }
+
+  .masthead { max-width: 900px; margin-bottom: clamp(1.6rem, 4vw, 3rem); }
+  .masthead h1 { font-size: clamp(2.4rem, 6.4vw, 5rem); line-height: 1.02; margin: .5rem 0 .8rem; letter-spacing: -.03em; }
+  .masthead h1 em { font-style: italic; color: var(--pink-deep); }
+  .lede { font-size: clamp(1.05rem, 1.8vw, 1.3rem); color: var(--text-soft); max-width: 60ch; }
+
+  .cover-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: clamp(1.4rem, 3vw, 2.6rem); align-items: start; }
+  .lead { position: relative; }
+  .badge, .side .side-title { font-family: var(--font-body); }
+  .badge { position: absolute; z-index: 2; top: 1rem; left: 1rem; background: var(--ink); color: #fff; font-weight: 700; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; padding: .4em .9em; border-radius: 100px; }
+
+  .side-title { font-size: 1rem; font-family: var(--font-body); font-weight: 650; text-transform: uppercase; letter-spacing: .08em; color: var(--slate); margin-bottom: 1rem; padding-bottom: .6rem; border-bottom: 2px solid var(--line); }
+  .side ul { list-style: none; padding: 0; display: grid; gap: .2rem; }
+  .side li { border-bottom: 1px solid var(--line); }
+  .side li:last-child { border-bottom: none; }
+  .side a { display: flex; gap: .9rem; padding: .95rem .2rem; align-items: flex-start; transition: transform .3s var(--ease); }
+  .side a:hover { transform: translateX(4px); }
+  .side .num { font-family: var(--font-display); font-size: 1.5rem; color: var(--cc); line-height: 1; min-width: 1.6em; }
+  .side .txt { display: flex; flex-direction: column; gap: .2rem; }
+  .side .c { font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--cc); }
+  .side .t { font-family: var(--font-display); font-size: 1.06rem; line-height: 1.18; color: var(--ink); }
+  .side a:hover .t { color: var(--pink-deep); }
+  .side .m { font-size: .78rem; color: var(--slate); }
+
+  @media (max-width: 880px) { .cover-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- Ticker ---------- */
+  .ticker { margin: clamp(1.4rem, 4vw, 3rem) 0; background: var(--ink); color: #fff; overflow: hidden; padding: .7rem 0; }
+  .ticker .track { display: inline-flex; white-space: nowrap; animation: marq 34s linear infinite; will-change: transform; }
+  .ticker span { font-family: var(--font-display); font-size: 1.3rem; padding: 0 1.4rem; display: inline-flex; align-items: center; gap: 1.4rem; }
+  .ticker i { color: var(--pink); font-style: normal; font-size: .8rem; }
+  @keyframes marq { to { transform: translateX(-50%); } }
+  .ticker:hover .track { animation-play-state: paused; }
+
+  /* ---------- Blocks ---------- */
+  .block { margin-top: clamp(3rem, 7vw, 5.5rem); }
+
+  .mosaic { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .tile { position: relative; overflow: hidden; border-radius: 20px; padding: 1.4rem 1.3rem 1.3rem; background: #fff; border: 1px solid var(--line); min-height: 190px; display: flex; flex-direction: column; justify-content: flex-end; gap: .3rem; transition: transform .4s var(--ease), box-shadow .4s var(--ease); }
+  .tile::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--cc) 20%, transparent), transparent 60%); opacity: .8; transition: opacity .4s; }
+  .tile:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+  .tile:hover::before { opacity: 1; }
+  .tile .count { position: relative; font-family: var(--font-display); font-size: 2.4rem; color: var(--cc); line-height: .9; }
+  .tile .tname { position: relative; font-family: var(--font-display); font-size: 1.24rem; color: var(--ink); line-height: 1.1; }
+  .tile .tblurb { position: relative; font-size: .84rem; color: var(--text-soft); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tile .go { position: relative; margin-top: .5rem; font-weight: 650; font-size: .82rem; color: var(--cc); opacity: 0; transform: translateY(4px); transition: opacity .3s, transform .3s; }
+  .tile:hover .go { opacity: 1; transform: none; }
+  @media (max-width: 900px) { .mosaic { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 460px) { .mosaic { grid-template-columns: 1fr; } }
+
+  /* ---------- Rail ---------- */
+  .rail { display: grid; grid-auto-flow: column; grid-auto-columns: 280px; gap: 1.2rem; overflow-x: auto; padding-bottom: 1rem; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+  .rail > * { scroll-snap-align: start; }
+  .rail::-webkit-scrollbar { height: 8px; }
+  .rail::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+
+  /* ---------- Feed ---------- */
+  .feed { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem 1.4rem; }
+  @media (max-width: 900px) { .feed { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .feed { grid-template-columns: 1fr; } }
+
+  /* ---------- Edito ---------- */
+  .edito-band { margin-top: clamp(3.5rem, 8vw, 6rem); background: linear-gradient(120deg, var(--beige), #f6e7d6); padding: clamp(2.6rem, 6vw, 4.5rem) 0; position: relative; overflow: hidden; }
+  .edito-band::after { content: ""; position: absolute; right: -6%; bottom: -40%; width: 30vw; height: 30vw; border-radius: 50%; background: radial-gradient(circle, rgba(250,97,154,.35), transparent 65%); }
+  .edito { max-width: 720px; position: relative; }
+  .edito h2 { font-size: clamp(1.8rem, 4.5vw, 3rem); margin-bottom: .8rem; }
+  .edito p { font-size: 1.1rem; color: var(--ink-2); margin-bottom: 1.6rem; max-width: 60ch; }
+</style>

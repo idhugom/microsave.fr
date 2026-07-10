@@ -1,0 +1,75 @@
+---
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { inCategory } from '../../lib/articles';
+import { CATEGORIES } from '../../lib/categories';
+
+export function getStaticPaths() {
+  return CATEGORIES
+    .map((c) => ({ c, items: inCategory(c.label) }))
+    .filter((x) => x.items.length > 0)
+    .map(({ c, items }) => ({ params: { category: c.slug }, props: { cat: c, items } }));
+}
+
+const { cat, items } = Astro.props;
+const lead = items.find((a) => a.image) ?? items[0];
+const rest = items.filter((a) => a !== lead);
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `${cat.label} — Microsave`,
+  description: cat.blurb,
+  url: `https://www.microsave.fr/categorie/${cat.slug}/`,
+};
+---
+<Base title={`${cat.label} · Microsave`} description={cat.blurb} jsonld={jsonld}>
+  <section class="cat-hero" style={`--cc:${cat.color}`}>
+    <div class="wrap">
+      <nav class="crumbs"><a href="/">Accueil</a><span>/</span><a href="/rubriques/">Rubriques</a></nav>
+      <span class="kicker" style={`color:${cat.color}`}>{items.length} article{items.length > 1 ? 's' : ''}</span>
+      <h1>{cat.label}</h1>
+      <p class="blurb">{cat.blurb}</p>
+    </div>
+    <div class="halo" aria-hidden="true"></div>
+  </section>
+
+  <section class="wrap">
+    {lead && (
+      <div class="cat-lead" data-reveal>
+        <ArticleCard article={lead} variant="feature" eager={true} />
+      </div>
+    )}
+    <div class="cat-grid">
+      {rest.map((a, i) => (<ArticleCard article={a} delay={(i % 3) + 1} />))}
+    </div>
+  </section>
+
+  <section class="wrap other">
+    <p class="other-title">Continuer à explorer</p>
+    <div class="chips">
+      {CATEGORIES.filter((c) => c.slug !== cat.slug && inCategory(c.label).length > 0).map((c) => (
+        <a href={`/categorie/${c.slug}/`} class="chip" style={`--cc:${c.color}`}>{c.label}</a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .cat-hero { position: relative; overflow: hidden; padding: clamp(2rem, 5vw, 3.6rem) 0 clamp(1.6rem, 4vw, 2.6rem); }
+  .halo { position: absolute; top: -60%; right: -6%; width: 40vw; height: 40vw; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--cc) 30%, transparent), transparent 62%); z-index: -1; }
+  .crumbs { display: flex; gap: .5em; font-size: .85rem; color: var(--slate); margin-bottom: 1rem; }
+  .crumbs a:hover { color: var(--pink-deep); }
+  .cat-hero h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); letter-spacing: -.03em; margin: .3rem 0 .6rem; }
+  .blurb { font-size: clamp(1.05rem, 2vw, 1.3rem); color: var(--text-soft); max-width: 56ch; }
+
+  .cat-lead { margin-bottom: clamp(2rem, 4vw, 3rem); max-width: 1000px; }
+  .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.7rem 1.5rem; }
+  @media (max-width: 900px) { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .cat-grid { grid-template-columns: 1fr; } }
+
+  .other { margin-top: clamp(3rem, 6vw, 4.5rem); }
+  .other-title { font-weight: 700; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--slate); margin-bottom: 1rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: .6rem; }
+  .chips .chip { font-size: .82rem; transition: transform .25s; }
+  .chips .chip:hover { transform: translateY(-3px); }
+</style>

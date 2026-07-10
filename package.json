@@ -1,0 +1,24 @@
+{
+  "name": "microsave",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "content": "node scripts/prepare-content.mjs",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.14.1",
+    "@astrojs/sitemap": "^3.7.0",
+    "@astrojs/rss": "^4.0.14",
+    "@fontsource-variable/fraunces": "^5.2.5",
+    "@fontsource-variable/instrument-sans": "^5.2.5"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5",
+    "playwright-core": "^1.56.0"
+  }
+}

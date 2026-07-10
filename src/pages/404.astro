@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import { articles } from '../lib/articles';
+const picks = articles.filter((a) => a.image).slice(0, 3);
+---
+<Base title="Page introuvable · Microsave" description="Cette page n’existe pas ou a été déplacée.">
+  <section class="wrap nf">
+    <span class="big">404</span>
+    <h1>Cette page s’est évaporée.</h1>
+    <p>Le lien est peut-être ancien ou l’adresse mal recopiée. Pas de panique, il reste beaucoup à lire.</p>
+    <div class="acts">
+      <a href="/" class="btn btn-pink">Retour à l’accueil</a>
+      <a href="/rubriques/" class="btn btn-ghost">Voir les rubriques</a>
+    </div>
+    {picks.length > 0 && (
+      <div class="picks">
+        {picks.map((a) => (<a href={`/${a.slug}/`}>{a.title}</a>))}
+      </div>
+    )}
+  </section>
+</Base>
+<style>
+  .nf { text-align: center; padding: clamp(3rem, 10vw, 7rem) 0; max-width: 640px; }
+  .big { font-family: var(--font-display); font-size: clamp(5rem, 20vw, 11rem); line-height: .9; color: var(--pink); display: block; }
+  .nf h1 { font-size: clamp(1.8rem, 5vw, 2.8rem); margin: 1rem 0 .6rem; }
+  .nf p { color: var(--text-soft); font-size: 1.1rem; margin-bottom: 1.8rem; }
+  .acts { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
+  .picks { margin-top: 2.6rem; display: grid; gap: .5rem; text-align: left; }
+  .picks a { padding: .8rem 1rem; background: #fff; border: 1px solid var(--line); border-radius: 12px; font-family: var(--font-display); color: var(--ink); transition: transform .25s, border-color .25s; }
+  .picks a:hover { transform: translateX(4px); border-color: var(--pink); }
+</style>

@@ -1,0 +1,123 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string | null;
+  type?: 'website' | 'article';
+  canonical?: string;
+  jsonld?: Record<string, any> | Record<string, any>[];
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description = 'Microsave — le magazine des choix malins : décryptages, comparatifs et conseils pratiques pour mieux décider au quotidien.',
+  image = null,
+  type = 'website',
+  canonical,
+  jsonld,
+  bodyClass = '',
+} = Astro.props;
+
+const site = 'https://www.microsave.fr';
+const url = canonical ?? new URL(Astro.url.pathname, site).href;
+const ogImage = image ? new URL(image, site).href : `${site}/logo-microsave.svg`;
+const fullTitle = title.includes('Microsave') ? title : `${title} · Microsave`;
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/logo-microsave.svg" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    <meta name="theme-color" content="#0b384f" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Microsave" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />}
+    <ClientRouter />
+  </head>
+  <body class={bodyClass}>
+    <a href="#main" class="skip">Aller au contenu</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // ------- Scroll reveal + reading progress + ticker pause (tiny, no deps) -------
+      const setup = () => {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const els = document.querySelectorAll('[data-reveal]');
+        if (reduce) {
+          els.forEach((e) => e.classList.add('in'));
+        } else if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            for (const en of entries) {
+              if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+            }
+          }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+          els.forEach((e) => io.observe(e));
+        } else {
+          els.forEach((e) => e.classList.add('in'));
+        }
+        // reading progress bar
+        const bar = document.getElementById('progress');
+        if (bar) {
+          const onScroll = () => {
+            const h = document.documentElement;
+            const max = h.scrollHeight - h.clientHeight;
+            bar.style.transform = `scaleX(${max > 0 ? h.scrollTop / max : 0})`;
+          };
+          document.addEventListener('scroll', onScroll, { passive: true });
+          onScroll();
+        }
+        // shrink header on scroll
+        const hd = document.querySelector('.site-header');
+        if (hd) {
+          const onS = () => hd.classList.toggle('scrolled', window.scrollY > 40);
+          document.addEventListener('scroll', onS, { passive: true });
+          onS();
+        }
+        // mobile nav
+        const burger = document.querySelector('.burger');
+        const nav = document.querySelector('.site-nav');
+        if (burger && nav) {
+          burger.addEventListener('click', () => {
+            const open = nav.classList.toggle('open');
+            burger.setAttribute('aria-expanded', String(open));
+            document.body.classList.toggle('nav-locked', open);
+          });
+        }
+      };
+      setup();
+      document.addEventListener('astro:after-swap', setup);
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip { position: fixed; left: -999px; top: 8px; z-index: 200; background: var(--ink); color: #fff; padding: .6em 1em; border-radius: 8px; }
+  .skip:focus { left: 8px; }
+  body.nav-locked { overflow: hidden; }
+</style>
