@@ -22,7 +22,7 @@ export type Article = {
 
 export const articles: Article[] = (raw as Article[])
   .slice()
-  .sort((a, b) => (a.date < b.date ? 1 : -1));
+  .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
 export const bySlug = new Map(articles.map((a) => [a.slug, a]));
 

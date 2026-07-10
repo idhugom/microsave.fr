@@ -7,5 +7,5 @@ export default defineConfig({
   build: { format: 'directory', inlineStylesheets: 'auto' },
   integrations: [sitemap()],
   compressHTML: true,
-  prefetch: { prefetchAll: true, defaultStrategy: 'viewport' },
+  prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
 });

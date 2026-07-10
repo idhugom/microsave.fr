@@ -19,12 +19,13 @@ const card = img ? img.replace('.webp', '-card.webp') : null;
     {img ? (
       <img
         src={variant === 'feature' ? img : card}
-        srcset={variant === 'feature' ? undefined : `${card} 780w, ${img} 1536w`}
+        srcset={`${card} 780w, ${img} 1536w`}
         sizes={variant === 'feature' ? '(max-width: 900px) 100vw, 60vw' : '(max-width: 700px) 100vw, 380px'}
         alt={article.image_alt}
         width={variant === 'feature' ? 1536 : 780}
         height={variant === 'feature' ? 1024 : 520}
         loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
         decoding="async"
       />
     ) : (

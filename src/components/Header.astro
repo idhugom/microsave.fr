@@ -9,7 +9,7 @@ const primary = CATEGORIES.slice(0, 7);
       <img src="/logo-microsave.svg" alt="Microsave" width="150" height="118" />
     </a>
 
-    <nav class="site-nav" aria-label="Rubriques">
+    <nav class="site-nav" id="site-nav" aria-label="Rubriques">
       <ul>
         {primary.map((c) => (
           <li><a href={`/categorie/${c.slug}/`} style={`--cc:${c.color}`}>{c.label.split(' ')[0]}</a></li>
@@ -22,7 +22,7 @@ const primary = CATEGORIES.slice(0, 7);
       <a class="search-link" href="/rubriques/" aria-label="Explorer">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       </a>
-      <button class="burger" aria-label="Menu" aria-expanded="false">
+      <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="site-nav">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -53,8 +53,8 @@ const primary = CATEGORIES.slice(0, 7);
   .burger { display: none; }
 
   @media (max-width: 900px) {
-    .site-nav { position: fixed; inset: 0 0 0 auto; width: min(84vw, 340px); background: var(--paper); box-shadow: var(--shadow-lg); transform: translateX(105%); transition: transform .4s var(--ease); padding: 5rem 1.4rem 2rem; margin: 0; overflow-y: auto; }
-    .site-nav.open { transform: none; }
+    .site-nav { position: fixed; inset: 0 0 0 auto; width: min(84vw, 340px); background: var(--paper); box-shadow: var(--shadow-lg); transform: translateX(105%); visibility: hidden; transition: transform .4s var(--ease), visibility .4s; padding: 5rem 1.4rem 2rem; margin: 0; overflow-y: auto; }
+    .site-nav.open { transform: none; visibility: visible; }
     .site-nav ul { flex-direction: column; align-items: stretch; gap: .2rem; }
     .site-nav a { font-size: 1.15rem; padding: .7em .6em; border-radius: 12px; }
     .site-nav a::after { display: none; }

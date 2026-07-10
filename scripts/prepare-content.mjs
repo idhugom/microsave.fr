@@ -25,16 +25,28 @@ const LABELS = { 'callout-info': 'Info', 'callout-tip': 'Astuce', 'callout-warni
 function sanitize(html) {
   if (!html) return '';
   let h = String(html);
-  h = h.replace(/<\/?(script|style)[^>]*>[\s\S]*?<\/(script|style)>/gi, '');
+  // strip dangerous elements (defense-in-depth even though content is model-generated)
+  h = h.replace(/<(script|style|iframe|object|embed|form|link|meta|base)\b[\s\S]*?<\/\1>/gi, '');
+  h = h.replace(/<(script|style|iframe|object|embed|form|link|meta|base)\b[^>]*\/?>/gi, '');
+  // strip inline event handlers and javascript: URLs
+  h = h.replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+  h = h.replace(/\s(href|src)\s*=\s*("|')?\s*javascript:[^"'>\s]*("|')?/gi, ' $1="#"');
+  // page supplies its own H1
   h = h.replace(/<h1[\s\S]*?<\/h1>/gi, '');
-  // add data-label to callouts for the CSS ::before badge
-  h = h.replace(/<aside class="callout ([a-z-]+)"/gi, (m, cls) => {
+  // callouts: inject the data-label badge (handle single OR double quotes, any variant)
+  h = h.replace(/<aside\s+class=(["'])callout\s+([a-z0-9-]+)\1/gi, (m, q, cls) => {
     const label = LABELS[cls] || 'À retenir';
     return `<aside class="callout ${cls}" data-label="${label}"`;
   });
-  // wrap bare tables in a horizontal-scroll container
-  h = h.replace(/<table(?![^>]*class=)/gi, '<table class="ms-table"');
-  h = h.replace(/<table class="ms-table"[\s\S]*?<\/table>/gi, (t) => `<div class="table-scroll">${t}</div>`);
+  // ensure every table carries ms-table, then wrap each in a horizontal-scroll container
+  h = h.replace(/<table\b([^>]*)>/gi, (m, attrs) => {
+    if (/class\s*=/i.test(attrs)) {
+      if (/ms-table/.test(attrs)) return m;
+      return `<table${attrs.replace(/class\s*=\s*(["'])(.*?)\1/i, 'class="$2 ms-table"')}>`;
+    }
+    return `<table class="ms-table"${attrs}>`;
+  });
+  h = h.replace(/<table\b[^>]*>[\s\S]*?<\/table>/gi, (t) => `<div class="table-scroll">${t}</div>`);
   return h.trim();
 }
 
@@ -127,6 +139,14 @@ for (const p of meta) {
   }
 }
 await flush();
+
+// Null out any image path whose optimized file did not actually land (no dangling 404s)
+for (const a of out) {
+  if (a.image) {
+    const abs = path.join(ROOT, 'public', a.image.replace(/^\//, ''));
+    if (!fs.existsSync(abs)) a.image = null;
+  }
+}
 
 fs.writeFileSync(path.join(ROOT, 'src/data/articles.json'), JSON.stringify(out));
 console.log(`articles.json written: ${out.length} (ai=${ok}, stub=${stub}), images optimized=${imgs}`);

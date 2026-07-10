@@ -33,7 +33,7 @@ const jsonld: Record<string, any>[] = [
     '@type': 'Article',
     headline: article.title,
     description: article.meta_description,
-    image: article.image ? new URL(article.image, site).href : undefined,
+    image: article.image ? new URL(article.image, site).href : `${site}/og-default.png`,
     datePublished: article.date,
     dateModified: article.date,
     author: { '@type': 'Organization', name: 'Microsave' },

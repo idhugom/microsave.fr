@@ -9,11 +9,13 @@
   /* Brand — from the logo */
   --ink: #0b384f;        /* deep teal — primary text & dark surfaces */
   --ink-2: #0f4a67;
-  --pink: #fa619a;       /* signature accent */
+  --pink: #fa619a;       /* signature accent (display / decorative) */
   --pink-deep: #e23f7f;
+  --pink-text: #c1155c;  /* AA-safe pink for links & small labels (~5.6:1) */
   --beige: #edcdab;      /* warm sand */
   --terra: #c99977;      /* terracotta */
-  --slate: #86929c;      /* cool grey */
+  --slate: #5f6b75;      /* cool grey — darkened for AA text contrast */
+  --slate-soft: #86929c; /* original logo grey, decoration only */
   --mist: #e2e5e7;
 
   /* Surfaces — warm paper, not sterile white */
@@ -25,21 +27,21 @@
   --text: #17303c;
   --text-soft: #52616b;
 
-  /* Category accents */
-  --c-assurance: #0b73a8;
-  --c-bricolage: #d97b3b;
-  --c-auto: #5b6fb0;
-  --c-maison: #b0748f;
-  --c-mode: #c05780;
-  --c-voyage: #1f9a8a;
-  --c-sante: #3f9e6c;
-  --c-education: #8a6fb0;
-  --c-cuisine: #d1642f;
-  --c-jardin: #6a9a3f;
-  --c-tech: #2c8fb0;
-  --c-sport: #d1483f;
-  --c-droit: #4a6b7a;
-  --c-autres: #86929c;
+  /* Category accents — darkened to clear AA (~4.5:1) as small text on paper */
+  --c-assurance: #0f5f86;
+  --c-bricolage: #b05a1c;
+  --c-auto: #45539c;
+  --c-maison: #8f5470;
+  --c-mode: #a83a66;
+  --c-voyage: #12796c;
+  --c-sante: #2e7d52;
+  --c-education: #6d5397;
+  --c-cuisine: #b04a1c;
+  --c-jardin: #4f7a2b;
+  --c-tech: #1e6f8c;
+  --c-sport: #b5332b;
+  --c-droit: #3a5766;
+  --c-autres: #5f6b75;
 
   --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
   --font-body: 'Instrument Sans Variable', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -105,7 +107,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 560; line-height
 .kicker {
   font-family: var(--font-body);
   font-weight: 600; font-size: .74rem; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--pink-deep); display: inline-flex; align-items: center; gap: .5em;
+  color: var(--pink-text); display: inline-flex; align-items: center; gap: .5em;
 }
 .kicker::before { content: ""; width: 1.6em; height: 2px; background: currentColor; border-radius: 2px; }
 
@@ -172,7 +174,19 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 560; line-height
 .prose ul li::marker { color: var(--pink); }
 .prose ol li::marker { color: var(--pink); font-weight: 700; }
 .prose strong { color: var(--ink); font-weight: 680; }
-.prose a { color: var(--pink-deep); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+.prose a { color: var(--pink-text); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+/* Fallback styling for any element the model may emit */
+.prose code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--paper-2); padding: .12em .4em; border-radius: 6px; border: 1px solid var(--line); }
+.prose pre { background: var(--ink); color: #eef3f5; padding: 1.1em 1.2em; border-radius: 14px; overflow-x: auto; margin: 1.6em 0; font-size: .92rem; }
+.prose pre code { background: none; border: none; padding: 0; color: inherit; }
+.prose figure { margin: 1.8em 0; }
+.prose figure img { border-radius: 14px; }
+.prose figcaption { font-size: .86rem; color: var(--slate); margin-top: .5em; text-align: center; }
+.prose hr { border: none; height: 1px; background: var(--line); margin: 2.4em 0; }
+.prose dl { margin: 1.4em 0; }
+.prose dt { font-weight: 680; color: var(--ink); margin-top: 1em; }
+.prose dd { margin: .2em 0 0; padding-left: 1em; color: var(--text-soft); }
+.prose li > ul, .prose li > ol { margin: .4em 0 .2em; }
 .prose blockquote {
   margin: 1.6em 0; padding: .4em 0 .4em 1.4em; border-left: 4px solid var(--pink);
   font-family: var(--font-display); font-size: 1.25em; font-style: italic; color: var(--ink);
@@ -220,5 +234,5 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 560; line-height
 
 footer .prose a { color: inherit; }
 
-/* Focus visibility */
-:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; border-radius: 4px; }
+/* Focus visibility — ink outline clears 3:1 on both paper and pink surfaces */
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; border-radius: 4px; box-shadow: 0 0 0 5px rgba(255,255,255,.85); }
