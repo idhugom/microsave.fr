@@ -1,1 +1,1 @@
-https://microsave.fr/* https://www.microsave.fr/:splat 301
+# La redirection apex microsave.fr -> www est gérée par functions/_middleware.js
