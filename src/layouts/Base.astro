@@ -119,6 +119,24 @@ const fullTitle = title.includes('Microsave') ? title : `${title} · Microsave`;
             if (e.key === 'Escape' && nav.classList.contains('open')) { setOpen(false); burger.focus(); }
           });
         }
+        // horizontal sliders (category rails)
+        document.querySelectorAll('[data-slider]').forEach((slider) => {
+          const rail = slider.querySelector('[data-rail]');
+          const prev = slider.querySelector('.slide-btn.prev');
+          const next = slider.querySelector('.slide-btn.next');
+          if (!rail || !prev || !next) return;
+          const sync = () => {
+            const max = rail.scrollWidth - rail.clientWidth - 2;
+            prev.disabled = rail.scrollLeft <= 2;
+            next.disabled = rail.scrollLeft >= max;
+          };
+          const page = () => Math.max(240, Math.round(rail.clientWidth * 0.85));
+          prev.addEventListener('click', () => rail.scrollBy({ left: -page(), behavior: 'smooth' }));
+          next.addEventListener('click', () => rail.scrollBy({ left: page(), behavior: 'smooth' }));
+          rail.addEventListener('scroll', sync, { passive: true });
+          window.addEventListener('resize', sync, { passive: true });
+          sync();
+        });
       };
       setup();
       document.addEventListener('astro:after-swap', setup);

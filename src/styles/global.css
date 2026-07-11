@@ -27,21 +27,8 @@
   --text: #17303c;
   --text-soft: #52616b;
 
-  /* Category accents — darkened to clear AA (~4.5:1) as small text on paper */
-  --c-assurance: #0f5f86;
-  --c-bricolage: #b05a1c;
-  --c-auto: #45539c;
-  --c-maison: #8f5470;
-  --c-mode: #a83a66;
-  --c-voyage: #12796c;
-  --c-sante: #2e7d52;
-  --c-education: #6d5397;
-  --c-cuisine: #b04a1c;
-  --c-jardin: #4f7a2b;
-  --c-tech: #1e6f8c;
-  --c-sport: #b5332b;
-  --c-droit: #3a5766;
-  --c-autres: #5f6b75;
+  /* Single secondary accent = the logo pink. --cc resolves to it everywhere. */
+  --cc: var(--pink);
 
   --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
   --font-body: 'Instrument Sans Variable', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -128,12 +115,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 560; line-height
 
 /* Category chip */
 .chip {
-  --cc: var(--slate);
   display: inline-flex; align-items: center; gap: .4em;
   font-weight: 650; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase;
   padding: .34em .72em; border-radius: 100px;
-  color: var(--cc); background: color-mix(in srgb, var(--cc) 12%, #fff);
-  border: 1px solid color-mix(in srgb, var(--cc) 26%, transparent);
+  color: var(--pink-text); background: color-mix(in srgb, var(--pink) 12%, #fff);
+  border: 1px solid color-mix(in srgb, var(--pink) 34%, transparent);
 }
 
 /* Scroll-reveal */
@@ -194,7 +180,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 560; line-height
 
 /* Callouts / mises en avant */
 .prose .callout {
-  --cc: var(--c-tech);
+  --cc: var(--pink-text);
   margin: 1.9em 0; padding: 1.15em 1.3em 1.15em 1.4em;
   background: color-mix(in srgb, var(--cc) 7%, #fff);
   border: 1px solid color-mix(in srgb, var(--cc) 22%, transparent);
@@ -208,9 +194,9 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 560; line-height
   font-family: var(--font-body); font-weight: 700; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
   color: #fff; background: var(--cc); padding: .28em .7em; border-radius: 100px;
 }
-.prose .callout-info { --cc: var(--c-assurance); }
-.prose .callout-tip { --cc: var(--c-sante); }
-.prose .callout-warning { --cc: var(--c-sport); }
+.prose .callout-info { --cc: var(--pink-text); }
+.prose .callout-tip { --cc: var(--pink-text); }
+.prose .callout-warning { --cc: var(--ink); }
 
 /* Tables */
 .prose .table-scroll { overflow-x: auto; margin: 1.9em 0; border-radius: 14px; border: 1px solid var(--line); }
@@ -228,7 +214,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 560; line-height
 }
 .prose .compare-col::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: var(--slate); }
 .prose .compare-col:first-child::before { background: linear-gradient(90deg, var(--pink), var(--pink-deep)); }
-.prose .compare-col:last-child::before { background: linear-gradient(90deg, var(--ink), var(--c-voyage)); }
+.prose .compare-col:last-child::before { background: linear-gradient(90deg, var(--ink), var(--ink-2)); }
 .prose .compare-col h4 { margin-top: .2em; }
 @media (max-width: 640px) { .prose .compare { grid-template-columns: 1fr; } }
 

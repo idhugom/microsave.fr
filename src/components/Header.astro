@@ -32,10 +32,12 @@ const primary = CATEGORIES.slice(0, 7);
 <style>
   .site-header { position: sticky; top: 0; z-index: 100; backdrop-filter: saturate(1.4) blur(10px); background: color-mix(in srgb, var(--paper) 82%, transparent); transition: background .3s, box-shadow .3s; }
   .site-header.scrolled { background: color-mix(in srgb, var(--paper) 94%, transparent); box-shadow: 0 6px 30px -18px rgba(11,56,79,.5); }
-  .accent { height: 4px; background: linear-gradient(90deg, var(--pink), var(--beige) 40%, var(--ink)); }
-  .bar { display: flex; align-items: center; gap: 1.4rem; padding-block: .55rem; }
-  .brand img { height: 46px; width: auto; transition: height .3s var(--ease); }
-  .site-header.scrolled .brand img { height: 38px; }
+  .accent { height: 3px; background: linear-gradient(90deg, var(--pink), var(--beige) 40%, var(--ink)); }
+  .bar { display: flex; align-items: center; gap: 1.4rem; padding-block: .35rem; }
+  .brand { display: block; margin-top: -2px; }
+  .brand img { height: 58px; width: auto; transition: height .3s var(--ease); }
+  .site-header.scrolled .brand img { height: 46px; }
+  @media (max-width: 560px) { .brand img { height: 48px; } }
 
   .site-nav { margin-left: auto; }
   .site-nav ul { list-style: none; display: flex; align-items: center; gap: .3rem; padding: 0; }

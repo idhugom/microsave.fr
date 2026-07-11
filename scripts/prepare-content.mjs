@@ -81,13 +81,23 @@ async function optimize(src, slug) {
   }
 }
 
-const decode = (s) => String(s || '')
-  .replace(/&#8217;|&#039;|&#39;/g, '’').replace(/&#8211;|&#8212;/g, '—')
-  .replace(/&#8230;/g, '…').replace(/&#215;/g, '×')
-  .replace(/&amp;/g, '&').replace(/&laquo;|&#171;/g, '«').replace(/&raquo;|&#187;/g, '»')
-  .replace(/&nbsp;/g, ' ').replace(/&eacute;/g, 'é').replace(/&egrave;/g, 'è')
-  .replace(/&agrave;/g, 'à').replace(/&ccedil;/g, 'ç').replace(/&ecirc;/g, 'ê')
-  .replace(/&quot;/g, '"').replace(/<[^>]+>/g, '').trim();
+const decodeEntities = (s) => String(s || '')
+  .replace(/&amp;/gi, '&') // un-nest double-encoded entities first
+  .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+  .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n))
+  .replace(/&rsquo;/gi, '’').replace(/&lsquo;/gi, '‘')
+  .replace(/&ldquo;/gi, '“').replace(/&rdquo;/gi, '”')
+  .replace(/&hellip;/gi, '…').replace(/&mdash;/gi, '—').replace(/&ndash;/gi, '–')
+  .replace(/&laquo;/gi, '«').replace(/&raquo;/gi, '»').replace(/&nbsp;/gi, ' ')
+  .replace(/&eacute;/gi, 'é').replace(/&egrave;/gi, 'è').replace(/&agrave;/gi, 'à')
+  .replace(/&ccedil;/gi, 'ç').replace(/&ecirc;/gi, 'ê').replace(/&quot;/gi, '"')
+  .replace(/&apos;/gi, '’');
+const decode = (s) => {
+  let out = String(s || '').replace(/<[^>]+>/g, ' ');
+  out = decodeEntities(out);
+  if (/&(amp|rsquo|#\d+);/i.test(out)) out = decodeEntities(out); // second pass for deep nesting
+  return out.replace(/\s+/g, ' ').trim();
+};
 
 let ok = 0, stub = 0, imgs = 0;
 const out = [];

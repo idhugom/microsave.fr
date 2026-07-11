@@ -51,17 +51,17 @@ const card = img ? img.replace('.webp', '-card.webp') : null;
   .media img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
   .card:hover .media img { transform: scale(1.06); }
   .ph { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-display); font-size: 4rem; color: color-mix(in srgb, var(--cc) 60%, #fff); background: linear-gradient(135deg, color-mix(in srgb, var(--cc) 16%, #fff), var(--paper-2)); }
-  .tag { position: absolute; left: .8rem; bottom: .8rem; font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: color-mix(in srgb, var(--cc) 92%, #000 4%); padding: .34em .7em; border-radius: 100px; box-shadow: 0 6px 16px -6px rgba(0,0,0,.4); opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
+  .tag { position: absolute; left: .8rem; bottom: .8rem; font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--pink-text); padding: .34em .7em; border-radius: 100px; box-shadow: 0 6px 16px -6px rgba(0,0,0,.4); opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
   .card:hover .tag { opacity: 1; transform: none; }
 
   .body { padding-top: .9rem; display: flex; flex-direction: column; gap: .45rem; }
-  .cat-kicker { color: var(--cc); font-size: .68rem; }
+  .cat-kicker { color: var(--pink-text); font-size: .68rem; }
   .card h3 { font-size: 1.24rem; line-height: 1.16; }
   .card h3 a { background-image: linear-gradient(var(--cc), var(--cc)); background-size: 0 2px; background-position: 0 100%; background-repeat: no-repeat; transition: background-size .35s var(--ease); }
   .card:hover h3 a { background-size: 100% 2px; }
   .dek { color: var(--text-soft); font-size: .98rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .meta { font-size: .82rem; color: var(--slate); display: flex; gap: .5em; align-items: center; margin-top: .1rem; }
-  .meta .mid { color: var(--cc); }
+  .meta .mid { color: var(--pink-text); }
 
   /* Feature (hero lead) */
   .v-feature .media { aspect-ratio: 16/10; border-radius: 26px; }
